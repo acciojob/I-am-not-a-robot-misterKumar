@@ -1,106 +1,89 @@
-//your code here
- let clickedImages = [];
-    let verifyButtonClicked = false;
+function shuffle(arr){
+    let currentIndex=arr.length;
+    let randomIndex;
+    let tempIndex;
+    while(currentIndex){
+        randomIndex=Math.floor(Math.random()*5);
 
-    // Function to shuffle an array
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
+        currentIndex--;
+        tempIndex=arr[currentIndex];
+        arr[currentIndex]=arr[randomIndex];
+        arr[randomIndex]=tempIndex;
     }
+}
 
-    // Function to initialize the images and state
-    function initialize() {
-        const imageClasses = ['img1', 'img2', 'img3', 'img4', 'img5'];
-        const duplicateClass = imageClasses[Math.floor(Math.random() * imageClasses.length)];
+let arr=["img1","img2","img3","img4","img5"];
+shuffle(arr);
 
-        // Duplicate one of the images
-        imageClasses.push(duplicateClass);
 
-        // Shuffle the images for random arrangement
-        shuffleArray(imageClasses);
 
-        const imageContainer = document.querySelector('.image-container');
-        imageContainer.innerHTML = ''; // Clear previous images
+let repeatind=Math.floor(Math.random()*(arr.length-1));
 
-        // Create and append image elements
-        imageClasses.forEach((className, index) => {
-            const img = document.createElement('img');
-            img.src = `path/to/api/${index + 1}.jpg`; // Replace with your actual API path
-            img.classList.add(className);
-            img.addEventListener('click', () => selectImage(img, className));
-            imageContainer.appendChild(img);
+let at=Math.floor(Math.random()*(arr.length-1));
+
+arr.splice(repeatind,0,arr[at]);
+let main=document.getElementById("main");
+let inner="";
+arr.forEach((ele)=>{
+ inner+=`<img class=${ele}>`;
+
+});
+main.innerHTML=inner;
+
+const images = document.querySelectorAll("img");
+// console.log(images);
+const para=document.getElementById("para");
+let selected =[];
+const verify=document.getElementById("verify");
+verify.onclick=()=>{
+    if(selected[0]===selected[1]){
+        para.innerText="You are a human. Congratulations!";
+        verify.style.display="none";
+    }
+    else{
+        para.innerText="We can't verify you as a human. You selected the non-identical tiles.";
+        verify.style.display="none";
+    }
+}
+
+const undo=document.getElementById("undo");
+undo.onclick=()=>{
+    selected=[];
+    verify.style.display="none";
+    // reset.style.display="none";
+    undo.style.display="none";
+    para.innerText="";
+    images.forEach((img)=>{
+        img.classList.remove("selected");
+    });
+};
+const reset=document.getElementById("reset");
+reset.onclick=()=>{
+  location.reload();
+};
+verify.style.display="none";
+// reset.style.display="none";
+undo.style.display="none";
+
+images.forEach(img=>{
+    // img.addEventListerner("click",()=>{
+        // console.log(img);
+
+        img.addEventListener("click",()=>{
+            if(img.classList.contains("selected")){
+                return;
+            }
+            img.classList.add("selected");
+            selected.push(img.classList[0]);
+            // reset.style.display="block";
+            undo.style.display="block";
+
+            if(selected.length==2){
+                verify.style.display="block";
+            }
+            else{
+                verify.style.display="none";
+            }
         });
 
-        // Reset state variables
-        clickedImages = [];
-        verifyButtonClicked = false;
-
-        // Show/hide buttons and message based on the state
-        showHideElements();
-    }
-
-    // Function to handle image click events
-    function selectImage(img, className) {
-        if (!verifyButtonClicked) {
-            if (clickedImages.length < 2 && !clickedImages.includes(img)) {
-                clickedImages.push({ img, className });
-                img.classList.add('selected');
-
-                if (clickedImages.length === 2) {
-                    document.getElementById('verify').style.display = 'inline';
-                }
-            }
-        }
-        // Show the reset button when at least one image is clicked
-        document.getElementById('reset').style.display = 'inline';
-    }
-
-    // Function to verify selected tiles
-    function verifyTiles() {
-        verifyButtonClicked = true;
-        showHideElements();
-
-        if (clickedImages.length === 2) {
-            const isIdentical = clickedImages[0].className === clickedImages[1].className;
-            const para = document.getElementById('para');
-            
-            if (isIdentical) {
-                para.textContent = 'You are a human. Congratulations!';
-            } else {
-                para.textContent = "We can't verify you as a human. You selected the non-identical tiles.";
-            }
-        }
-    }
-
-    // Function to reset the state
-    function resetState() {
-        initialize();
-        // Hide the reset button after resetting the state
-        document.getElementById('reset').style.display = 'none';
-    }
-
-    // Function to show/hide buttons and message based on the state
-    function showHideElements() {
-        const resetButton = document.getElementById('reset');
-        const verifyButton = document.getElementById('verify');
-        const para = document.getElementById('para');
-
-        if (clickedImages.length === 0) {
-            resetButton.style.display = 'none';
-            verifyButton.style.display = 'none';
-            para.textContent = '';
-        } else if (clickedImages.length === 1) {
-            resetButton.style.display = 'inline';
-            verifyButton.style.display = 'none';
-            para.textContent = '';
-        } else if (clickedImages.length === 2 && !verifyButtonClicked) {
-            resetButton.style.display = 'inline';
-            verifyButton.style.display = 'inline';
-            para.textContent = '';
-        }
-    }
-
-    // Initial setup on page load
-    window.onload = initialize;
+    });
