@@ -1,5 +1,5 @@
-//your code here
 let image = [];
+
 for (let i = 0; i < 5; i++) {
   let t = document.createElement("IMG");
   t.setAttribute("data-ns-test", `img${i + 1}`);
@@ -9,6 +9,7 @@ for (let i = 0; i < 5; i++) {
   t.src = `images/${i + 1}.jpg`;
   image.push(t);
 }
+
 let temp = Math.floor(Math.random() * 5);
 let t = document.createElement("IMG");
 t.setAttribute("data-ns-test", `img${temp + 1}`);
@@ -17,14 +18,16 @@ t.height = 100;
 t.onclick = (e) => captchaClick(e);
 t.src = `images/${temp + 1}.jpg`;
 image.push(t);
+
 image.sort(() => Math.random() - 0.5);
+
 for (let i = 0; i < 6; i++) {
   document.getElementById("main").appendChild(image[i]);
 }
 
 let captcha = [];
+
 function clearCaptcha() {
-  // console.log("Clearing captcha");
   for (let i = 0; i < 6; i++) {
     image[i].onclick = (e) => captchaClick(e);
   }
@@ -44,7 +47,6 @@ function captchaClick(e) {
   console.log(e.target.attributes["data-ns-test"].nodeValue);
   captcha.push(e.target.attributes["data-ns-test"].nodeValue);
   e.target.onclick = () => {};
-  // console.log(captcha);
 
   if (captcha.length === 1) {
     let p = document.createElement("button");
